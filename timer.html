@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            transition: background-color 1s ease;
+        }
+        #timer {
+            font-size: 2em;
+            margin: 20px;
+        }
+        #options {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="sessionTitle">Speaker name:</label>
+        <input type="text" id="sessionTitle" placeholder="Speaker 1">
+    </div>
+    <div id="options">
+        <label for="sessionType">Select speech type:</label>
+        <select id="sessionType">
+            <option value="shortSpeech">Short Speech</option>
+            <option value="iceBreaker">Ice Breaker</option>
+            <option value="regularSpeech">Regular Speech</option>
+            <option value="individualEvaluator">Individual Evaluator</option>
+            <option value="custom">Custom</option>
+            <option value="test">test</option>
+        </select>
+        <input type="number" id="customTime" placeholder="Custom Time (minutes)" style="display: none;">
+    </div>
+    <button onclick="startTimer()">Start Timer</button>
+    <div id="timer">00:00</div>
+
+    <script>
+        function startTimer() {
+            // Get values from input fields
+            const sessionTitle = document.getElementById('sessionTitle').value;
+            const sessionType = document.getElementById('sessionType').value;
+            const customTime = document.getElementById('customTime').value;
+
+            // Set the time based on the selected type or custom input
+            let time;
+            switch (sessionType) {
+                 case 'test':
+                    time = { X: 5, Y: 10, Z: 15 };
+                    break;
+                case 'shortSpeech':
+                    time = { X: 60, Y: 90, Z: 120 };
+                    break;
+                case 'iceBreaker':
+                    time = { X: 240, Y: 300, Z: 360 };
+                    break;
+                case 'regularSpeech':
+                    time = { X: 300, Y: 360, Z: 420 };
+                    break;
+                case 'individualEvaluator':
+                    time = { X: 120, Y: 150, Z: 180 };
+                    break;
+                case 'custom':
+                    if (customTime <= 3) {
+                        let x = Math.floor( (customTime-1) * 60)
+                        let y = Math.floor( (customTime-0.5) * 60)
+                        let z = Math.floor(customTime*60)
+                        time = { X: x, Y:y, Z:z };
+                    } else {
+                        let x = Math.floor( (customTime-2) * 60)
+                        let y = Math.floor( (customTime-1) * 60)
+                        let z = Math.floor(customTime*60)
+                        time = { X: x, Y:y, Z:z };
+                    }
+                    
+                    break;
+                default:
+                    alert('Invalid session type');
+                    return;
+            }
+
+            // Save session in cookie
+            document.cookie = `sessionTitle=${sessionTitle};`;
+            document.cookie = `sessionType=${sessionType};`;
+
+            // Start the timer
+            let currentTime = 0;
+            const timerElement = document.getElementById('timer');
+            const timerInterval = setInterval(testme, 1000);
+
+            const element = document.getElementById("demo");
+            let tt = document.getElementById('sessionTitle')
+
+            console.log(`cc :${time.x} ${time.y} ${time.z}`);
+            
+            function testme() {
+                let mi = Math.floor(currentTime/60);
+                let sc = currentTime%60;
+                let display = `${String(mi).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
+                timerElement.textContent = `Current Time:  ${mi} minute ${sc} seconds`
+                
+                if (currentTime === time.X) {
+                    document.body.style.backgroundColor = 'green';
+                } else if (currentTime === time.Y) {
+                    document.body.style.backgroundColor = 'yellow';
+                } else if (currentTime === time.Z) {
+                    document.body.style.backgroundColor = 'red';
+                }
+                console.log(`Current Time:${currentTime++}`);
+            }
+
+            function runEach(time) {
+                  const minutes = Math.floor(currentTime / 60);
+                const seconds = currentTime % 60;
+
+                timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                // Log the current time every second
+                //console.log(`Current Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+
+                // Change background color based on time
+                if (currentTime === time.X * 60) {
+                    document.body.style.backgroundColor = 'green';
+                } else if (currentTime === time.Y * 60) {
+                    document.body.style.backgroundColor = 'yellow';
+                } else if (currentTime === time.Z * 60) {
+                    document.body.style.backgroundColor = 'red';
+                }
+
+                //currentTime++;
+                console.log(`Current Time:${currentTime}`);
+
+                if (currentTime > customTime * 60) {
+                   // clearInterval(timerInterval);
+                    document.body.style.backgroundColor = 'purple';
+                    timerElement.textContent = 'Timer Done!';
+                }
+            }
+        }
+
+        // Toggle custom time input visibility
+        document.getElementById('sessionType').addEventListener('change', function () {
+            const customTimeInput = document.getElementById('customTime');
+            customTimeInput.style.display = this.value === 'custom' ? 'inline-block' : 'none';
+        });
+    </script>
+</body>
+</html>
